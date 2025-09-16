@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:latest
+    container_name: db_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql123
+      MYSQL_DATABASE: ejemplo-db
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: usuario123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  backend:
+    container_name: backend_app
+    depends_on:
+      - db
+    build: ./backend
+    ports:
+      - "8090:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ejemplo-db
+      SPRING_DATASOURCE_USERNAME: usuario
+      SPRING_DATASOURCE_PASSWORD: usuario123
+
+  frontend:
+    container_name: frontend_app
+    build: ./frontend
+    ports:
+        - "80:80"
+
+volumes:
+  mysql_data:
+
